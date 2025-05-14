@@ -1,5 +1,4 @@
 import axios from "axios";
-import { error } from "console";
 import { ErrorBoundaryHandler } from "next/dist/client/components/error-boundary";
 
 const CONGRESS_API_KEY = process.env.NEXT_PUBLIC_CONGRESS_API_KEY;
@@ -14,7 +13,7 @@ const congressApi = axios.create({
 
 export const fetchRecentBills = async (limit = 20, offset = 0) => {
     try {
-        const response = await congressApi.get('/bill', {
+        const response = await congressApi.get('/bill/188', {
             params: {
                 limit,
                 offset,
@@ -29,7 +28,7 @@ export const fetchRecentBills = async (limit = 20, offset = 0) => {
 
 export const searchBills = async (query, limit = 20, offset = 0) => {
     try {
-        const response = await congressApi.get('/bill/search', {
+        const response = await congressApi.get('/bill/188', {
             params: {
                 query,
                 limit,
@@ -40,12 +39,13 @@ export const searchBills = async (query, limit = 20, offset = 0) => {
         return response.data.bills;
     } catch (error) {
         console.error('Error searching bills:', error);
-    } throw error
+        throw error
+    } 
 };
 
 export const getBillDetails = async (congressNum, billType, billNumber) => {
     try {
-        const response = await congressApi.get(`/bill/${congressNum}/${billType}/${billNumber}`, {
+        const response = await congressApi.get(`/bill/${congress}/${billType}/${billNumber}`, {
             params: {
                 format: 'json'
             }
