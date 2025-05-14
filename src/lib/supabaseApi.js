@@ -1,34 +1,60 @@
 import supabase from './supabase';
 
 export const saveBillToDb = async (billData) => {
-    const { data, error } = await supabase
-        .from('bills')
-        .upsert({
-            id: billData.id,
-            title: billData.title,
-            description: billData.description || '',
-            introduced_date: billData.introduced_date,
-            last_action_date: billData.last_action_date,
-            last_action_text: billData.last_action_date || '',
-            bill_number: billData.bill_number,
-            bill_type: billData.bill_type,
-            congress: billData.congress,
-            chamber: billData.chamber,
-            sponsor: billData.sponsor,
-            status: billData.status,
-            source: billData.source,
-            state: billData.state || null,
-            simple_summary: billData.simple_summary || '',
-            url: billData.url || ''
-        });
-    
-        if (error) {
-            console.error('Error saving bill to database:', error);
-            throw error;
+    try {
+        console.log('Bill data to save:', billData ?
+            `ID: ${billData.id}, Title: ${billData.title?.substring(0, 20)}...` :
+            'no data');
+
+
+        if (!billData || !billData.id) {
+            console.log('Skipping bill save due to missing required data (id)');
+            return null;
         }
 
-        return data;
+        if (!billData.title) {
+            console.log('Skipping bill save due to missing required data (title)')
+            return null;
+        }
+        
+        const mappedData = {
+                id: billData.id,
+                title: billData.title,
+                description: billData.description || '',
+                introduced_date: billData.introduced_date || null,
+                last_action_date: billData.last_action_date || null,
+                last_action_text: billData.last_action_text || '',
+                bill_number: billData.bill_number || '',
+                bill_type: billData.type || '',
+                congress: billData.congress || '',
+                chamber: billData.chamber || '',
+                sponsor: billData.sponsor || '',
+                status: billData.status || '',
+                source: billData.source || 'federal',
+                state: billData.state || null,
+                simple_summary: billData.simple_summary || '',
+                url: billData.url || ''
+            };
+
+            console.log('Attempting to save bill to database...');
+
+            const { data, error } = await supabase
+                .from('bills')
+                .upsert(mappedData);
+
+            if (error) {
+                console.error('Error saving bill to database:', error);
+                return null;
+            }
+
+            console.log('Successfully saved bill to database');
+            return data;
+    } catch (error) {
+        console.error('Exception saving bill to database:', error);
+        return null;
+    }
 };
+        
 
 export const getUserSavedBills = async (userId) => {
     const { data, error } = await supabase
@@ -155,5 +181,5 @@ export const saveLegislatorToDb = async (legislatorData) => {
         throw error;
     }
     return data;
-};
+}
 

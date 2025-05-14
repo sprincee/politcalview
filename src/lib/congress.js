@@ -11,49 +11,138 @@ const congressApi = axios.create({
     }
 });
 
+const mockBill = {
+        id: 'hr2730-118',
+        bill_number: 'H.R. 2730',
+        number: '2730',
+        type: 'HR',
+        congress: '118',
+        title: 'Healthcare Accessiblity for All Act',
+        description: 'A bill to improve healthcare accessbility.',
+        introduced_date: '2023-04-15',
+        last_action_date: '2023-06-20',
+        last_action_text: 'Referred to the Subcomittee on Health',
+        chamber: 'house',
+        sponsor: 'Rep. Johnson, Mike [R-LA]',
+        status: 'In Committee',
+        source: 'federal',
+        state: null,
+        url: 'https://www.congress.gov/bill/118th-congress/house-bill/2730',
+        simple_summary: 'N/A'
+    };
+
 export const fetchRecentBills = async (limit = 20, offset = 0) => {
     try {
-        const response = await congressApi.get('/bill/188', {
+        console.log('Fetching recent bills from Congress 118.')
+        const response = await congressApi.get('/bill/118', {
             params: {
                 limit,
                 offset,
                 format: 'json'
             }
         });
-        return response.data.bills;
+        if (response?.data?.bills && response.data.bills.length > 0) {
+            return response.data.bills;
+        }
+
+        console.log('API returned no bills, using mock data now');
+        return [mockBill];
     } catch (error) {
-        console.error('Error fetching recent bills:', error);
-    } throw error
+        console.error('Error fetching recent bills', error);
+        return [mockBill];
+    }
 };
 
 export const searchBills = async (query, limit = 20, offset = 0) => {
     try {
-        const response = await congressApi.get('/bill/188', {
+        console.log(`Searching bills with query: "${query}"`);
+        const response = await congressApi.get('/bill/118', {
             params: {
-                query,
-                limit,
+                //q: query,
+                limit: 100,
                 offset,
                 format: 'json'
             }
         });
-        return response.data.bills;
+
+        console.log('API Response Status:', response.status);
+        console.log('API Response data type:', typeof response.data);
+        console.log('API response data keys:', Object.keys(response.data));
+
+        console.log('Bills array:', JSON.stringify(response.data.bills));
+
+        if (response?.data?.bills && Array.isArray(response.data.bills) && response.data.bills.length > 0) {
+            console.log(`Found ${response.data.bills.length} bills matching query`)
+
+            let bills = response.data.bills;
+
+            if (query && query.trim() !== '') {
+                const lowerQuery = query.toLowerCase();
+
+                bills = bills.filter(bill =>
+                (bill.title?.toLowerCase().includes(lowerQuery)) ||
+                (bill.latestAction?.text?.toLowerCase().includes(lowerQuery)) ||
+                (`${bill.type} ${bill.number}`.toLowerCase().includes(lowerQuery))
+                );
+
+                console.log(`Filtered to ${bills.length} bills matching "${query}"`);
+
+            }
+
+            const mappedBills = bills.map(bill => ({
+                id: `${bill.type.toLowerCase()}${bill.number}-${bill.congress}`,
+                bill_number: `${bill.type} ${bill.number}`,
+                number: bill.number,
+                type: bill.type,
+                congress: bill.congress,
+                title: bill.title || 'No title available',
+                description: bill.latestAction?.text || 'No description available',
+                introduced_date: bill.introduced_date || null,
+                last_action_date: bill.latestAction?.actionDate || null,
+                last_action_text: bill.latestAction?.text || '',
+                chamber: bill.originChamber?.toLowerCase() || '',
+                sponsor: bill.sponsors ? bill.sponsors[0]?.fullName || '' : '',
+                status: bill.latestAction?.text ? 'Active' : 'Unknown',
+                source: 'federal',
+                state: null,
+                url: bill.url || '',
+                simple_summary: ''
+            }));
+
+            console.log('Mapped bills', mappedBills.length);
+            return mappedBills;
+        } else {
+            console.log('No bills found in API response');
+            return [];
+        }
     } catch (error) {
-        console.error('Error searching bills:', error);
-        throw error
-    } 
+        console.error('Error details:', error);
+        if (error.response) {
+            console.error('Response status:', error.response.status);
+            console.error('Response data:', error.response.data);
+        }
+        return [];
+    }
 };
 
 export const getBillDetails = async (congressNum, billType, billNumber) => {
     try {
-        const response = await congressApi.get(`/bill/${congress}/${billType}/${billNumber}`, {
+        console.log(`Getting details for bill ${congressNum}/${billType}/${billNumber}`);
+        const response = await congressApi.get(`/bill/${congressNum}/${billType}/${billNumber}`, {
             params: {
                 format: 'json'
             }
         });
-        return response.data.bill;
+        if (response?.data?.bill) {
+            return response.data.bill;
+        }
+
+        console.log('API returned no bill details, using mock data now');
+        return mockBill;
     } catch (error) {
-        console.error('Error fetching bill details:', error);
-    } throw error;
+        console.error('Error fetching bill details', error);
+        return mockBill;
+    }
 };
 
 export const getLegislators = async (limit = 20, offset = 0) => {
@@ -68,5 +157,6 @@ export const getLegislators = async (limit = 20, offset = 0) => {
         return response.data.members;
     } catch (error) {
         console.error('Error fetching legislators:', error);
-    } throw error
+       throw error
+    }
 };

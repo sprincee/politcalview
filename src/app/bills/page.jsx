@@ -20,15 +20,26 @@ export default function BillsPage() {
                 let billsData = [];
                 if (query) {
                     billsData = await searchBills(query);
+                    console.log(`Search returned ${billsData.length} bills`);
                 } else {
                     billsData = await fetchRecentBills();
+                    console.log(`Fetch returned ${billsData.length} bills`);
                 }
 
-                for (const bill of billsData) {
-                    await saveBillToDb({
-                        ...bill,
-                        source: 'federal'
-                    });
+                if (billsData && billsData.length > 0) {
+                    console.log('Saving bills to database...');
+                    for (const bill of billsData) {
+                        try {
+                            await saveBillToDb({
+                                ...bill,
+                                source: 'federal'
+                            });
+                        } catch (error) {
+                            console.error('Error saving bill, continuing:', error);
+                        }
+                    }
+                } else {
+                    console.log('No bills to save');
                 }
 
                 setBills(billsData);
@@ -37,7 +48,7 @@ export default function BillsPage() {
                 setError('Failed to load bills. Please try again later.');
             } finally {
                 setLoading(false);
-            }   
+            }
         };
 
         loadBills();
@@ -81,7 +92,7 @@ export default function BillsPage() {
             <div className="space-y-4">
                 {bills.map(bill => (
                     <div
-                        key={bill.id}
+                        key={bill.id || Math.random()}
                         className="border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow p-4"
                     >
                         <h3 className="text-lg font-semibold text-blue-600 mb-1">
