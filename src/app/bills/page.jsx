@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { fetchRecentBills, searchBills } from '../../lib/congress';
 import { saveBillToDb } from '../../lib/supabaseApi';
+import Navbar from '@/components/ui/Navbar';
 
 export default function BillsPage() {
     const searchParams = useSearchParams();
@@ -55,6 +56,102 @@ export default function BillsPage() {
     }, [query]);
 
     return (
+        <main className='min-h-screen bg-gray-50'>
+            <Navbar />
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+                <div className='mb-8'>
+                    <h1 className='text-3xl font-bold text-gray-900'>Browse Legislation</h1>
+                    <p className='mt-2 text-sm text-gray-900'>
+                        Search and explore federal bills to stay informed on legislative activities.
+                    </p>
+                </div>
+
+                <div className='mb-8'>
+                    <form action='/bills' method='get' className='flex max-w-3xl'>
+                        <input
+                            type='text'
+                            name='q'
+                            placeholder='Search bills by keyword, number, or topic...'
+                            defaultValue={query || ''}
+                            className='flex-1 min-w-0 block w-full px-4 py-3 border border-gray-300 rounded-l-md focus:ring-green-500 focus:border-green-500'
+                        />
+                        <button
+                            type='submit'
+                            className='bg-green-800 text-white px-6 py-3 rounded-r-md hover:bg-green-700 transition-colors font-medium'
+                        >
+                            Search
+                        </button>
+                    </form>
+                </div>
+
+                {loading ? (
+                    <div className='flex justify-center items-center h-64'>
+                        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-800'></div>
+                    </div>
+                ) : bills.length === 0 ? (
+                    <div className='bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm'>
+                        <div className='mx-auto h-12 w-12 text-gray-400 mb-4'>I</div>
+                        <h3 className='text-lg font-medium text-gray-900'>No bills found.</h3>
+                        <p className='mt-2 text-gray-500'>
+                            Try adjusting your search to find what you're looking for.
+                        </p>
+                    </div>
+                ) : (
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                        {bills.map(bill => (
+                            <div
+                                key={bill.id || Math.random()}
+                                className='border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow'
+                            >
+                                <div className='p-5'>
+                                    <div className='flex justify-between items-center mb-3'>
+                                        <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>
+                                            {bill.bill_number}
+                                        </span>
+                                        <span className='text-xs text-gray-500'>
+                                            {bill.chamber === 'house' ? 'House' : 'Senate'}
+                                        </span>
+                                    </div>
+
+                                    <h3 className='text-lg font-semibold text-gray-900 mb-2'>
+                                        {bill.title}
+                                    </h3>
+
+                                    <p className='text-gray-600 text-sm mb-4 line-clamp-3'>
+                                        {bill.description || 'No description available.'}
+                                    </p>
+
+                                    <div className='flex items-center justify-between text-sm'>
+                                        <div className='text-gray-500'>
+                                            Introduced: {new Date(bill.introduced_date).toLocaleDateString()}
+                                        </div>
+                                        <span className='px-2.5 p-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
+                                            {bill.status || 'Unknown status'}
+                                        </span>
+                                    </div>
+
+                                    <div className='mt-4 pt-3 border-t border-gray-100 text-right'>
+                                        <a
+                                            href={`/bills/${bill.id}`}
+                                            className='text-green-800 hover:text-green-700 text-sm font-medium'
+                                        >
+                                            View Details -
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                 </div>
+            )}
+        </div>
+    </main>
+    );
+}
+
+        
+
+
+        /*
         <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold mb-8">Browse Legislation</h1>
           
@@ -117,3 +214,4 @@ export default function BillsPage() {
         </div>
     );
 }
+    */
