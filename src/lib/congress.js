@@ -52,13 +52,13 @@ export const fetchRecentBills = async (limit = 20, offset = 0) => {
     }
 };
 
-export const searchBills = async (query, limit = 20, offset = 0) => {
+export const searchBills = async (query, limit = 100, offset = 0) => {
     try {
         console.log(`Searching bills with query: "${query}"`);
         const response = await congressApi.get('/bill/118', {
             params: {
                 //q: query,
-                limit: 100,
+                limit: limit,
                 offset,
                 format: 'json'
             }
