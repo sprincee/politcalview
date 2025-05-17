@@ -64,8 +64,8 @@ export default function Home() {
                 </div>
                 <h3 className='ml-3 text-lg font-medium text-gray-900'>Bill Notifications</h3>
               </div>
-              <p className='mt-4 text-sm text-gray-500'>
-                Get notified when bills you're following change status or come up for a vote.
+              <p className="mt-4 text-sm text-gray-500">
+                Get notified when bills you are following change status or come up for a vote.
               </p>
             </div>
           </div>

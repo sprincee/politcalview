@@ -1,5 +1,4 @@
 import axios from "axios";
-import { ErrorBoundaryHandler } from "next/dist/client/components/error-boundary";
 
 const CONGRESS_API_KEY = process.env.NEXT_PUBLIC_CONGRESS_API_KEY;
 const CONGRESS_API_BASE_URL = 'https://api.congress.gov/v3';
