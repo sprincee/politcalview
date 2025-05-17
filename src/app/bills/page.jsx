@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { fetchRecentBills, searchBills } from '../../lib/congress';
 import { saveBillToDb } from '../../lib/supabaseApi';
 import Navbar from '@/components/ui/Navbar';
 
-export default function BillsPage() {
+function BillsContent() {
     const searchParams = useSearchParams();
     const [bills, setBills] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -57,7 +57,6 @@ export default function BillsPage() {
 
     return (
         <main className='min-h-screen bg-gray-50'>
-            <Navbar />
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
                 <div className='mb-8'>
                     <h1 className='text-3xl font-bold text-gray-900'>Browse Legislation</h1>
@@ -146,6 +145,19 @@ export default function BillsPage() {
         </div>
     </main>
     );
+}
+
+export default function BillsPage() {
+    return (
+        <main className='min-h-screen bg-gray-50'>
+            <Navbar />
+            <Suspense fallback={<div className='flex justify-center items-center h-64'>
+                <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-800'></div>
+            </div>}>
+                <BillsContent />
+            </Suspense>
+        </main>
+    )
 }
 
         
