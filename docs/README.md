@@ -1,8 +1,19 @@
-# PoliView Developer Manual
+# PoliView 
 
 ## Description
 PoliView is a web application designed to make legislative information accessible for everyone. It's aim is to simplify complex federal and state legislative information, helping citizens stay informed and engaged with the democratic process. 
 In a fully realized PoliView, users can search for bills, track legislation, follow repersentatives, and recieve notifications about bills they care about.
+
+## Target Browsers
+This application is optimized for:
+- **Desktop:** Chrome 90+, Firefox 90+, Safari 14+, Edge 90+
+
+## Hosted -- Seamlessly on Vercel
+Link : https://politcalview.vercel.app
+
+---
+
+## Developer Manual
 
 ### How to Install the Application and Dependancies
 
