@@ -14,6 +14,26 @@ function BillsContent() {
 
     const query = searchParams.get('q');
 
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Date unavailable';
+
+        try {
+            const date = new Date(dateString);
+
+            if (isNaN(date.getTime())) {
+                return 'Date unavailable.'
+            }
+
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        } catch (e) {
+            return 'Date unavailable';
+        }
+    };
+
     useEffect(() => {
         const loadBills = async () => {
             setLoading(true);
@@ -66,7 +86,7 @@ function BillsContent() {
                 </div>
 
                 <div className='mb-8'>
-                    <form action='/bills' method='get' className='flex max-w-3xl'>
+                    <form action='/bills' method='get' className='flex max-w-3xl text-gray-900'>
                         <input
                             type='text'
                             name='q'
@@ -89,7 +109,7 @@ function BillsContent() {
                     </div>
                 ) : bills.length === 0 ? (
                     <div className='bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm'>
-                        <div className='mx-auto h-12 w-12 text-gray-400 mb-4'>I</div>
+                        <div className='mx-auto h-12 w-12 text-gray-400 mb-4'>📄</div>
                         <h3 className='text-lg font-medium text-gray-900'>No bills found.</h3>
                         <p className='mt-2 text-gray-500'>
                             Try adjusting your search to find what you're looking for.
@@ -105,7 +125,7 @@ function BillsContent() {
                                 <div className='p-5'>
                                     <div className='flex justify-between items-center mb-3'>
                                         <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>
-                                            {bill.bill_number}
+                                            {bill.bill_number || `${bill.type} ${bill.number}` || 'Unknown Bill'}
                                         </span>
                                         <span className='text-xs text-gray-500'>
                                             {bill.chamber === 'house' ? 'House' : 'Senate'}
@@ -122,7 +142,7 @@ function BillsContent() {
 
                                     <div className='flex items-center justify-between text-sm'>
                                         <div className='text-gray-500'>
-                                            Introduced: {new Date(bill.introduced_date).toLocaleDateString()}
+                                            Introduced: {formatDate(bill.introduced_date)}
                                         </div>
                                         <span className='px-2.5 p-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800'>
                                             {bill.status || 'Unknown status'}

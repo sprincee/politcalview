@@ -41,7 +41,58 @@ export const fetchRecentBills = async (limit = 20, offset = 0) => {
             }
         });
         if (response?.data?.bills && response.data.bills.length > 0) {
-            return response.data.bills;
+            const mappedBills = response.data.bills.map(bill => {
+
+                const rawIntroducedDate = bill.introducedDate || bill.introduced_date || bill.introduced || null;
+
+                let formattedIntroducedDate = null;
+                if (rawIntroducedDate) {
+                    const date = new Date(rawIntroducedDate);
+                    if (!isNaN(date.getTime()) && date.getFullYear() >= 1970) {
+                        formattedIntroducedDate = date.toISOString().split('T')[0];
+                    } else {
+                        console.log(`Invalid date found for bill ${bill.number}: ${rawIntroducedDate}`);
+                    }
+                }
+
+                const rawLastActionDate = bill.latestAction?.actionDate || null;
+                let formattedLastActionDate = null;
+                if (rawLastActionDate) {
+                    const date = new Date(rawLastActionDate);
+                    if (!isNaN(date.getTime()) && date.getFullYear() >= 1970) {
+                        formattedLastActionDate = date.toISOString().split('T')[0];
+                    }
+                }
+
+                return {
+                    id: `${bill.type.toLowerCase()}${bill.number}-${bill.congress}`,
+                    bill_number: `${bill.type} ${bill.number}`,
+                    number: bill.number,
+                    type: bill.type,
+                    congress: bill.congress,
+                    title: bill.title || 'No title available',
+                    description: bill.latestAction?.text || 'No description available',
+                    introduced_date: formattedIntroducedDate,
+                    last_action_date: formattedLastActionDate,
+                    last_action_text: bill.latestAction?.text || '',
+                    chamber: bill.originChamber?.toLowerCase() || '',
+                    sponsor: bill.sponsors ? bill.sponsors[0]?.fullName || '' : '',
+                    status: bill.latestAction?.text ? 'Active' : 'Unknown',
+                    source: 'federal',
+                    state: null,
+                    url: bill.url || '',
+                    simple_summary: ''
+                };
+            });
+
+            console.log('Mapped bills', mappedBills.length);
+            if (mappedBills.length > 0) {
+                console.log('Sample bill date format check:', {
+                    bill_number: mappedBills[0].bill_number,
+                    introduced_date: mappedBills[0].introduced_date
+                });
+            }
+            return mappedBills;
         }
 
         console.log('API returned no bills, using mock data now');
@@ -86,29 +137,58 @@ export const searchBills = async (query, limit = 100, offset = 0) => {
 
                 console.log(`Filtered to ${bills.length} bills matching "${query}"`);
 
-            }
+            } 
 
-            const mappedBills = bills.map(bill => ({
-                id: `${bill.type.toLowerCase()}${bill.number}-${bill.congress}`,
-                bill_number: `${bill.type} ${bill.number}`,
-                number: bill.number,
-                type: bill.type,
-                congress: bill.congress,
-                title: bill.title || 'No title available',
-                description: bill.latestAction?.text || 'No description available',
-                introduced_date: bill.introduced_date || null,
-                last_action_date: bill.latestAction?.actionDate || null,
-                last_action_text: bill.latestAction?.text || '',
-                chamber: bill.originChamber?.toLowerCase() || '',
-                sponsor: bill.sponsors ? bill.sponsors[0]?.fullName || '' : '',
-                status: bill.latestAction?.text ? 'Active' : 'Unknown',
-                source: 'federal',
-                state: null,
-                url: bill.url || '',
-                simple_summary: ''
-            }));
+            const mappedBills = bills.map(bill => {
+                const rawIntroducedDate = bill.introducedDate || bill.introduced_date || bill.introduced || null;
+                
+                let formattedIntroducedDate = null;
+                if (rawIntroducedDate) {
+                    const date = new Date(rawIntroducedDate);
+                    if (!isNaN(date.getTime()) && date.getFullYear() >= 1970) {
+                        formattedIntroducedDate = date.toISOString().split('T')[0]; 
+                    } else {
+                        console.log(`Invalid date found for bill ${bill.number}: ${rawIntroducedDate}`);
+                    }
+                }
+                
+                const rawLastActionDate = bill.latestAction?.actionDate || null;
+                let formattedLastActionDate = null;
+                if (rawLastActionDate) {
+                    const date = new Date(rawLastActionDate);
+                    if (!isNaN(date.getTime()) && date.getFullYear() >= 1970) {
+                        formattedLastActionDate = date.toISOString().split('T')[0];
+                    }
+                }
+
+                return {
+                    id: `${bill.type.toLowerCase()}${bill.number}-${bill.congress}`,
+                    bill_number: `${bill.type} ${bill.number}`,
+                    number: bill.number,
+                    type: bill.type,
+                    congress: bill.congress,
+                    title: bill.title || 'No title available',
+                    description: bill.latestAction?.text || 'No description available',
+                    introduced_date: formattedIntroducedDate,
+                    last_action_date: formattedLastActionDate,
+                    last_action_text: bill.latestAction?.text || '',
+                    chamber: bill.originChamber?.toLowerCase() || '',
+                    sponsor: bill.sponsors ? bill.sponsors[0]?.fullName || '' : '',
+                    status: bill.latestAction?.text ? 'Active' : 'Unknown',
+                    source: 'federal',
+                    state: null,
+                    url: bill.url || '',
+                    simple_summary: ''
+                };
+            });
 
             console.log('Mapped bills', mappedBills.length);
+            if (mappedBills.length > 0) {
+                console.log('Sample bill date format check:', {
+                    bill_number: mappedBills[0].bill_number,
+                    introduced_date: mappedBills[0].introduced_date
+                });
+            }
             return mappedBills;
         } else {
             console.log('No bills found in API response');

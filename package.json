@@ -12,10 +12,15 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.9.0",
+    "beasties": "^0.3.3",
+    "browserify-fs": "^1.0.0",
+    "critters": "^0.0.23",
     "d3": "^7.9.0",
+    "framer-motion": "^12.12.1",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-toastify": "^11.0.5",
     "swr": "^2.3.3"
   },
   "devDependencies": {
@@ -26,6 +31,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
+    "mock-fs": "^5.5.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

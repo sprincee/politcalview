@@ -79,12 +79,12 @@ export default function AboutPage() {
                     <div className="flex flex-col sm:flex-row justify-center gap-6">
                         <div className="text-center p-4 rounded-lg bg-green-50">
                             <h3 className="font-medium text-gray-900 mb-2">Email</h3>
-                            <p className="text-gray-600">contact@poliview.example.com</p>
+                            <p className="text-gray-600">mkhan142@terpmail.umd.edu</p>
                         </div>
                         
                         <div className="text-center p-4 rounded-lg bg-green-50">
                             <h3 className="font-medium text-gray-900 mb-2">GitHub</h3>
-                            <p className="text-gray-600">github.com/poliview</p>
+                            <p className="text-gray-600">github.com/sprincee</p>
                         </div>
                         
                         <div className="text-center p-4 rounded-lg bg-green-50">
