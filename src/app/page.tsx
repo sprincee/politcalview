@@ -3,14 +3,8 @@
 import Link from 'next/link'
 import Navbar from '@/components/ui/Navbar.jsx'
 import { motion } from 'framer-motion'
-import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const [ setIsLoaded ] = useState(false);
-  
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   return (
     <main className='min-h-screen bg-gradient-to-b from-white to-green-50'>
