@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [ setIsLoaded ] = useState(false);
   
   useEffect(() => {
     setIsLoaded(true);
