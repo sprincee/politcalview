@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center">
           <motion.a
-            href="hhttps://www.linkedin.com/in/mahad-skhan/" // Replace with your LinkedIn
+            href="hhttps://www.linkedin.com/in/mahad-skhan/" 
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
