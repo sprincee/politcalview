@@ -7,7 +7,8 @@ import { motion } from 'framer-motion'
 export default function Home() {
 
   return (
-    <main className='min-h-screen bg-gradient-to-b from-white to-green-50'>
+    <main className='min-h-screen bg-gradient-to-b from-white to-green-50 relative'>
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-green-200/10 rounded-full blur-3xl animate-[pulse_6s_ease-in-out_infinite]"></div>
       <Navbar />
       <div className='relative isolate px-6 pt-14 lg:px-8'>
         <motion.div 
